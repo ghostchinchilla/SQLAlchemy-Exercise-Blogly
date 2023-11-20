@@ -1,7 +1,8 @@
 """SQLAlchemy models for blogly."""
 
-from flask_sqlalchemy import SQLAlchemy
 import datetime
+from flask_sqlalchemy import SQLAlchemy
+
 
 db = SQLAlchemy()
 
@@ -43,6 +44,21 @@ class User(db.Model):
         """Return nicely-formatted date."""
 
         return self.created_at.strftime("%a %b %-d  %Y, %-I:%M %p")
+
+class Tag(db.Model):
+    """Tag that can be added to posts."""
+
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+
+    posts = db.relationship(
+        'Post',
+        secondary="posts_tags",
+        # cascade="all,delete",
+        backref="tags",
+    )
 
 
 def connect_db(app):
